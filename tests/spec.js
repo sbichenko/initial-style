@@ -102,7 +102,7 @@ describe("Styles retrieval  ", function() {
         return true;
 
         function logFailure(result, declaration, propName) {
-            console.error('Property value mismatch', propName, 'reference: ' + declaration.getPropertyValue(propName), 'result: ' + result[propName]);
+            console.log('Property value mismatch', propName, 'reference: ' + declaration.getPropertyValue(propName), 'result: ' + result[propName]);
         }
     }
 });
