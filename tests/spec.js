@@ -1,13 +1,8 @@
+"use strict";
+
 jasmine.getFixtures().fixturesPath = 'base/tests/';
 
-describe("Initial style values ", function() {
-    'use strict';
-
-    it("Should return a map where keys are CSS property names and values are corresponding initial values", function() {
-        loadFixtures('single.html');
-        expect(checkResult(InitialStyle.get(), getReferenceComputedStyle())).toBe(true);
-    });
-
+describe("Options  ", function() {
     it("Should create a dummy element with the passed tag name", function(done) {
         loadFixtures('single.html');
 
@@ -36,16 +31,22 @@ describe("Initial style values ", function() {
         InitialStyle.get({parentNode: parentNode});
     });
 
-    it("Unicode-bidi and direction properties should be taken into account", function() {
-        loadFixtures('exceptions.html');
-        expect(checkResult(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
-    });
+    function createMutationObserver(done, expectCallback) {
+        var obs = new MutationObserver(function(mutations) {
+            expectCallback(mutations);
+            obs.disconnect();
+            done();
+        });
 
-    it("Element selectors with high specificity in CSS should not affect the result", function() {
-        loadFixtures('css.html');
-        expect(checkResult(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
-    });
+        //noinspection JSCheckFunctionSignatures
+        obs.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+});
 
+describe("DOM manipulation  ", function() {
     it("Body child count should remain the same", function() {
         loadFixtures('single.html');
 
@@ -58,19 +59,23 @@ describe("Initial style values ", function() {
             return document.body.children.length;
         }
     });
+});
 
-    function createMutationObserver(done, expectCallback) {
-        var obs = new MutationObserver(function(mutations) {
-            expectCallback(mutations);
-            obs.disconnect();
-            done();
-        });
+describe("Styles retrieval  ", function() {
+    it("Should return a map where keys are CSS property names and values are corresponding initial values", function() {
+        loadFixtures('single.html');
+        expect(isEqualToDeclaration(InitialStyle.get(), getReferenceComputedStyle())).toBe(true);
+    });
 
-        obs.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    }
+    it("Unicode-bidi and direction properties should be taken into account", function() {
+        loadFixtures('exceptions.html');
+        expect(isEqualToDeclaration(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
+    });
+
+    it("Element selectors with high specificity in CSS should not affect the result", function() {
+        loadFixtures('css.html');
+        expect(isEqualToDeclaration(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
+    });
 
     function getReferenceComputedStyle() {
         return window.getComputedStyle($('#reference')[0]);
@@ -80,7 +85,7 @@ describe("Initial style values ", function() {
      * @param {Object} result
      * @param {CSSStyleDeclaration} declaration
      */
-    function checkResult(result, declaration) {
+    function isEqualToDeclaration(result, declaration) {
         for (var i = 0; i < declaration.length; i++) {
             var propName = declaration[i];
             if (declaration.getPropertyValue(propName) !== result[propName]) {
