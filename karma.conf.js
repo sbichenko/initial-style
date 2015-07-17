@@ -69,11 +69,30 @@ module.exports = function(config) {
             'Chrome',
             'Firefox'
             //'Safari' doesn't support `all` shorthand
-            ],
+        ],
 
+        customLaunchers: {
+            'SL_Chrome': {
+                base: 'SauceLabs',
+                browserName: 'chrome'
+            },
+            'SL_InternetExplorer': {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                version: '11'
+            },
+            'SL_FireFox': {
+                base: 'SauceLabs',
+                browserName: 'firefox'
+            }
+        },
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false
     });
+
+    if(process.env.TRAVIS){
+        configuration.browsers = ['SL_Chrome', 'SL_InternetExplorer', 'SL_FireFox'];
+    }
 };
