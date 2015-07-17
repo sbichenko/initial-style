@@ -10,3 +10,5 @@ addons:
 before_install:
   - export DISPLAY=:99.0
 before_script: npm install -g karma-cli
+notifications:
+  email: false
