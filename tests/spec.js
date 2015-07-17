@@ -10,7 +10,7 @@ describe("Options  ", function() {
         createMutationObserver(done, function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.addedNodes.length > 0) {
-                    expect(mutations[0].addedNodes[0].tagName.toUpperCase()).toBe(tagName.toUpperCase());
+                    expect(mutations[0].addedNodes[0].localName.toUpperCase()).toBe(tagName.toUpperCase());
                 }
             });
         });

@@ -2,7 +2,7 @@
 // Generated on Mon Jul 13 2015 20:43:58 GMT+0300 (EEST)
 
 module.exports = function(config) {
-    config.set({
+    var configuration = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -30,7 +30,8 @@ module.exports = function(config) {
             'karma-jasmine-jquery',
             'karma-chrome-launcher',
             'karma-firefox-launcher',
-            'karma-safari-launcher'
+            'karma-safari-launcher',
+            'karma-sauce-launcher'
         ],
 
 
@@ -68,7 +69,6 @@ module.exports = function(config) {
         browsers: [
             'Chrome',
             'Firefox'
-            //'Safari' doesn't support `all` shorthand
         ],
 
         customLaunchers: {
@@ -87,12 +87,28 @@ module.exports = function(config) {
             }
         },
 
+        sauceLabs: {
+            testName: 'Web App Unit Tests',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
+            username: process.env.SAUCE_USERNAME,
+            accessKey: process.env.SAUCE_ACCESS_KEY,
+            startConnect: false,
+            connectOptions: {
+                port: 5757,
+                logfile: 'sauce_connect.log'
+            }
+        },
+
+        captureTimeout: 0,
+
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false
-    });
+    };
 
     if(process.env.TRAVIS){
-        configuration.browsers = ['SL_Chrome', 'SL_InternetExplorer', 'SL_FireFox'];
+        configuration.browsers = ['SL_Chrome', 'SL_FireFox'];
     }
+
+    config.set(configuration);
 };
