@@ -19,11 +19,12 @@
          */
         get: function(options) {
             var settings = createSettings(options);
-            var dummy = appendDummy(settings.tagName, settings.parentNode);
+            var parentNode = settings.parentNode;
+            var dummy = appendDummy(settings.tagName, parentNode);
             var initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
 
             addExceptions(initialStyleAsPlainObject);
-            dummy.remove(); // getComputedStyle() returns a live object in Chrome. Cache results before removing dummy.
+            parentNode.removeChild(dummy); // getComputedStyle() returns a live object in Chrome. Cache results before removing dummy.
             return initialStyleAsPlainObject;
 
             function createSettings(options) {
