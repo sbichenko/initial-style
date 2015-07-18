@@ -12,17 +12,17 @@
          * @param {Object=} options
          * @param {Node=} options.parentNode  A DOM node to which the dummy element will be appended. This DOM node
          *     should be attached to the document body or be the body itself. Default: document.body.
-         * @return {Object.<string, string|number>}  An object that contains initial values of all CSS properties
-         *     available to the user agent. Property names are CSS property names (in CSS formatting, with hyphens),
-         *     property values are initial values.
+         * @return {Object.<string, string|number>}  An object that contains computed initial values of all CSS
+         *     properties available to the user agent. Property names are CSS property names (in CSS formatting, with
+         *     hyphens), property values are computed initial values.
          */
         get: function(options) {
             var settings = createSettings(options);
-            var parentNode = settings.parentNode;
-            var dummy = appendDummy(parentNode);
-            var initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
+            var initialStyleAsPlainObject;
 
-            parentNode.removeChild(dummy); // getComputedStyle() returns a live object in Chrome. Cache results before removing dummy.
+            doWithDummyElement(settings.parentNode, function(dummy) {
+                initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
+            });
             return initialStyleAsPlainObject;
 
             function createSettings(options) {
@@ -37,27 +37,28 @@
                 return settings;
             }
 
-            function appendDummy(parentNode) {
+            function doWithDummyElement(parentNode, callback) {
                 var dummy = document.createElement('div');
 
                 dummy.setAttribute('style', getStyle());
                 parentNode.appendChild(dummy);
-                return dummy;
+                callback(dummy);
+                parentNode.removeChild(dummy);
 
                 function getStyle() {
-                    var PROPERTIES = {
+                    var INITIAL_STYLE = {
                         'all': 'initial',
 
                         // unaffected by `all` shorthand
                         'direction': 'ltr',
                         'unicode-bidi': 'normal'
                     };
-                    var style = '';
+                    var styleString = '';
 
-                    for (var propName in PROPERTIES) {
-                        style += propName  + ': ' + PROPERTIES[propName] + ' !important; ';
+                    for (var propName in INITIAL_STYLE) {
+                        styleString += propName + ': ' + INITIAL_STYLE[propName] + ' !important; ';
                     }
-                    return style;
+                    return styleString;
                 }
             }
 
