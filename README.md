@@ -4,6 +4,16 @@ Get initial values for all CSS and SVG properties, as implemented by user agent.
 
 Works in Chrome and Firefox: [![Build Status](https://travis-ci.org/sbichenko/initial-style.svg)](https://travis-ci.org/sbichenko/initial-style)
 
+## Installation
+
+### Bower
+
+`bower install initial-style`
+
+### Without bower
+
+Simply include the `initial-style.js` file, as it has no dependencies.
+
 ## Usage
 
 Call:
