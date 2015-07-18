@@ -3,8 +3,8 @@
 
     window.InitialStyle = {
         /**
-         * Get initial values for all CSS properties, as implemented by user agent. Adds 'px' to length values (for
-         * example, value of margin-top will be 0px, not 0).
+         * Get initial values for all CSS and SVG properties, as implemented by user agent. Adds 'px' to length values
+         * (for example, value of margin-top will be 0px, not 0).
          *
          * Will append an element in DOM, get the style data and then remove the element. This will cause a repaint,
          * but unlikely to have other side-effects, unless MutationObservers are observing that part of DOM.
