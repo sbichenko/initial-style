@@ -1,0 +1,26 @@
+{
+  "name": "initial-style",
+  "main": "initial-style.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/sbichenko/initial-style",
+  "authors": [
+    "Stanislav Bichenko <stasbichenko@gmail.com>"
+  ],
+  "description": "Get initial values for all CSS and SVG properties, as implemented by user agent.",
+  "keywords": [
+    "CSS",
+    "styles",
+    "initial",
+    "initial-style",
+    "DOM",
+    "user-agent"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
