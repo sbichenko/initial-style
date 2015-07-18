@@ -40,22 +40,19 @@
             function appendDummy(parentNode) {
                 var dummy = document.createElement('div');
 
-                dummy.setAttribute('style', getStyle());
                 parentNode.appendChild(dummy);
+
+                var allStyles = window.getComputedStyle(dummy);
+
+                var style = '';
+                for (var i = 0; i < allStyles.length; i++) {
+                    if (allStyles.item(i) !== '-ms-animation-name') {
+                        style += allStyles.item(i) + ': initial !important; ';
+                    }
+                }
+                dummy.setAttribute('style', style + '-ms-animation-name: none !important');
                 return dummy;
 
-                function getStyle() {
-                    var UNAFFECTED_BY_ALL_SHORTHAND = {
-                        'direction': 'ltr',
-                        'unicode-bidi': 'normal'
-                    };
-                    var style = 'all: initial !important; ';
-
-                    for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
-                        style += propName  + ': ' + UNAFFECTED_BY_ALL_SHORTHAND[propName] + ' !important; ';
-                    }
-                    return style;
-                }
             }
 
             function cssStyleDeclarationToPlainObject(declaration) {
