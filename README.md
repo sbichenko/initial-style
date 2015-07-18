@@ -33,6 +33,6 @@ Result:
 
 `parentNode` - A DOM node to which the dummy element, that is used to calculate style, will be appended. This DOM node should be attached to the document body or be the body itself. Default: `document.body`.
 
-## Participations
+## Participation
 
 I will gladly accept pull requests if the tests are provided.
