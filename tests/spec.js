@@ -3,20 +3,6 @@
 jasmine.getFixtures().fixturesPath = 'base/tests/';
 
 describe("Options  ", function() {
-    it("Should create a dummy element with the passed tag name", function(done) {
-        loadFixtures('single.html');
-
-        var tagName = 'ul';
-        createMutationObserver(done, function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.addedNodes.length > 0) {
-                    expect(mutations[0].addedNodes[0].localName.toUpperCase()).toBe(tagName.toUpperCase());
-                }
-            });
-        });
-        InitialStyle.get({tagName: tagName});
-    });
-
     it("Should create a dummy element in the specified container node", function(done) {
         loadFixtures('container.html');
 
@@ -51,7 +37,7 @@ describe("DOM manipulation  ", function() {
         loadFixtures('single.html');
 
         var childrenBefore = getBodyChildrenLength();
-        InitialStyle.get({tagName: 'span'});
+        InitialStyle.get();
         var childrenAfter = getBodyChildrenLength();
         expect(childrenBefore).toEqual(childrenAfter);
 
@@ -69,15 +55,16 @@ describe("Styles retrieval  ", function() {
 
     it("Unicode-bidi and direction properties should be taken into account", function() {
         loadFixtures('exceptions.html');
-        expect(isEqualToDeclaration(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
+        expect(isEqualToDeclaration(InitialStyle.get(), getReferenceComputedStyle())).toBe(true);
     });
 
     it("Element selectors with high specificity in CSS should not affect the result", function() {
         loadFixtures('css.html');
-        expect(isEqualToDeclaration(InitialStyle.get({tagName: 'span'}), getReferenceComputedStyle())).toBe(true);
+        expect(isEqualToDeclaration(InitialStyle.get(), getReferenceComputedStyle())).toBe(true);
     });
 
     function getReferenceComputedStyle() {
+        $('style').remove();
         return window.getComputedStyle($('#reference')[0]);
     }
 
