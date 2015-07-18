@@ -107,7 +107,7 @@ module.exports = function(config) {
     };
 
     if(process.env.TRAVIS){
-        configuration.browsers = ['SL_Chrome', 'SL_FireFox'];
+        configuration.browsers = ['SL_Chrome', 'SL_FireFox', 'SL_InternetExplorer'];
     }
 
     config.set(configuration);
