@@ -30,7 +30,6 @@ module.exports = function(config) {
             'karma-jasmine-jquery',
             'karma-chrome-launcher',
             'karma-firefox-launcher',
-            'karma-safari-launcher',
             'karma-sauce-launcher'
         ],
 
@@ -75,11 +74,6 @@ module.exports = function(config) {
             'SL_Chrome': {
                 base: 'SauceLabs',
                 browserName: 'chrome'
-            },
-            'SL_InternetExplorer': {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                version: '11'
             },
             'SL_FireFox': {
                 base: 'SauceLabs',

@@ -45,14 +45,17 @@
                 return dummy;
 
                 function getStyle() {
-                    var UNAFFECTED_BY_ALL_SHORTHAND = {
+                    var PROPERTIES = {
+                        'all': 'initial',
+
+                        // unaffected by `all` shorthand
                         'direction': 'ltr',
                         'unicode-bidi': 'normal'
                     };
-                    var style = 'all: initial !important; ';
+                    var style = '';
 
-                    for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
-                        style += propName  + ': ' + UNAFFECTED_BY_ALL_SHORTHAND[propName] + ' !important; ';
+                    for (var propName in PROPERTIES) {
+                        style += propName  + ': ' + PROPERTIES[propName] + ' !important; ';
                     }
                     return style;
                 }
