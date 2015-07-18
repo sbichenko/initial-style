@@ -3,7 +3,8 @@
 
     window.InitialStyle = {
         /**
-         * Get initial values for all CSS properties, as implemented by user agent.
+         * Get initial values for all CSS properties, as implemented by user agent. Adds 'px' to length values (for
+         * example, value of margin-top will be 0px, not 0).
          *
          * Will append an element in DOM, get the style data and then remove the element. This will cause a repaint,
          * but unlikely to have other side-effects, unless MutationObservers are observing that part of DOM.
@@ -21,7 +22,6 @@
             var dummy = appendDummy(parentNode);
             var initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
 
-            addExceptions(initialStyleAsPlainObject);
             parentNode.removeChild(dummy); // getComputedStyle() returns a live object in Chrome. Cache results before removing dummy.
             return initialStyleAsPlainObject;
 
@@ -40,9 +40,22 @@
             function appendDummy(parentNode) {
                 var dummy = document.createElement('div');
 
-                dummy.setAttribute('style', 'all: initial !important');
+                dummy.setAttribute('style', getStyle());
                 parentNode.appendChild(dummy);
                 return dummy;
+
+                function getStyle() {
+                    var UNAFFECTED_BY_ALL_SHORTHAND = {
+                        'direction': 'ltr',
+                        'unicode-bidi': 'normal'
+                    };
+                    var style = 'all: initial !important; ';
+
+                    for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
+                        style += propName  + ': ' + UNAFFECTED_BY_ALL_SHORTHAND[propName] + ' !important; ';
+                    }
+                    return style;
+                }
             }
 
             function cssStyleDeclarationToPlainObject(declaration) {
@@ -53,17 +66,6 @@
                     result[propName] = declaration.getPropertyValue(propName);
                 }
                 return result;
-            }
-
-            function addExceptions(style) {
-                var UNAFFECTED_BY_ALL_SHORTHAND = {
-                    'direction': 'ltr',
-                    'unicode-bidi': 'normal'
-                };
-
-                for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
-                    style[propName] = UNAFFECTED_BY_ALL_SHORTHAND[propName] + ' !important';
-                }
             }
         }
     };
