@@ -62,7 +62,7 @@
                 };
 
                 for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
-                    style[propName] = UNAFFECTED_BY_ALL_SHORTHAND[propName];
+                    style[propName] = UNAFFECTED_BY_ALL_SHORTHAND[propName] + ' !important';
                 }
             }
         }
