@@ -3,7 +3,8 @@
 
     window.InitialStyle = {
         /**
-         * Get computed initial values for all CSS properties, as implemented by user agent.
+         * Get initial values for all CSS and SVG properties, as implemented by user agent. Adds 'px' to length values
+         * (for example, value of margin-top will be 0px, not 0).
          *
          * Will append an element in DOM, get the style data and then remove the element. This will cause a repaint,
          * but unlikely to have other side-effects, unless MutationObservers are observing that part of DOM.
@@ -11,17 +12,17 @@
          * @param {Object=} options
          * @param {Node=} options.parentNode  A DOM node to which the dummy element will be appended. This DOM node
          *     should be attached to the document body or be the body itself. Default: document.body.
-         * @return {Object.<string, string|number>}  An object that contains initial values of all CSS properties
-         *     available to the user agent. Property names are CSS property names (in CSS formatting, with hyphens),
-         *     property values are initial values.
+         * @return {Object.<string, string|number>}  An object that contains computed initial values of all CSS
+         *     properties available to the user agent. Property names are CSS property names (in CSS formatting, with
+         *     hyphens), property values are computed initial values.
          */
         get: function(options) {
             var settings = createSettings(options);
-            var dummy = appendDummy(settings.parentNode);
-            var initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
+            var initialStyleAsPlainObject;
 
-            addExceptions(initialStyleAsPlainObject);
-            dummy.remove(); // getComputedStyle() returns a live object in Chrome. Cache results before removing dummy.
+            doWithDummyElement(settings.parentNode, function(dummy) {
+                initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
+            });
             return initialStyleAsPlainObject;
 
             function createSettings(options) {
@@ -36,12 +37,29 @@
                 return settings;
             }
 
-            function appendDummy(parentNode) {
+            function doWithDummyElement(parentNode, callback) {
                 var dummy = document.createElement('div');
 
-                dummy.setAttribute('style', 'all: initial !important');
+                dummy.setAttribute('style', getStyle());
                 parentNode.appendChild(dummy);
-                return dummy;
+                callback(dummy);
+                parentNode.removeChild(dummy);
+
+                function getStyle() {
+                    var INITIAL_STYLE = {
+                        'all': 'initial',
+
+                        // unaffected by `all` shorthand
+                        'direction': 'ltr',
+                        'unicode-bidi': 'normal'
+                    };
+                    var styleString = '';
+
+                    for (var propName in INITIAL_STYLE) {
+                        styleString += propName + ': ' + INITIAL_STYLE[propName] + ' !important; ';
+                    }
+                    return styleString;
+                }
             }
 
             function cssStyleDeclarationToPlainObject(declaration) {
@@ -52,17 +70,6 @@
                     result[propName] = declaration.getPropertyValue(propName);
                 }
                 return result;
-            }
-
-            function addExceptions(style) {
-                var UNAFFECTED_BY_ALL_SHORTHAND = {
-                    'direction': 'ltr',
-                    'unicode-bidi': 'normal'
-                };
-
-                for (var propName in UNAFFECTED_BY_ALL_SHORTHAND) {
-                    style[propName] = UNAFFECTED_BY_ALL_SHORTHAND[propName];
-                }
             }
         }
     };
