@@ -48,9 +48,18 @@ describe("DOM manipulation  ", function() {
 });
 
 describe("Styles retrieval  ", function() {
+    var ORIGIN_PROPERTIES = ['perspective-origin', '-webkit-perspective-origin', 'transform-origin', '-webkit-transform-origin'];
+
     it("Should return a map where keys are CSS property names and values are corresponding initial values", function() {
         loadFixtures('single.html');
         expect(isEqualToDeclaration(InitialStyle.get(), getReferenceComputedStyle())).toBe(true);
+    });
+
+    it("Should not contain perspective-origin and transform-origin values (incl. prefixed version)", function() {
+        loadFixtures('single.html');
+
+        var retrievedProps = Object.keys(InitialStyle.get());
+        expect(ORIGIN_PROPERTIES.filter(function(prop) {return retrievedProps.indexOf(prop) > -1;}).length).toEqual(0);
     });
 
     it("Unicode-bidi and direction properties should be taken into account", function() {
@@ -75,6 +84,9 @@ describe("Styles retrieval  ", function() {
     function isEqualToDeclaration(result, declaration) {
         for (var i = 0; i < declaration.length; i++) {
             var propName = declaration[i];
+            if (ORIGIN_PROPERTIES.indexOf(propName) > -1) {
+                continue;
+            }
             if (declaration.getPropertyValue(propName) !== result[propName]) {
                 logFailure(result, declaration, propName);
                 return false;

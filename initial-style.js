@@ -3,8 +3,8 @@
 
     window.InitialStyle = {
         /**
-         * Get initial values for all CSS and SVG properties, as implemented by user agent. Adds 'px' to length values
-         * (for example, value of margin-top will be 0px, not 0).
+         * Compute initial values for all CSS and SVG properties, as implemented by user agent. Ignores
+         * `perspective-origin` and `transform-origin` properties.
          *
          * Will append an element in DOM, get the style data and then remove the element. This will cause a repaint,
          * but unlikely to have other side-effects, unless MutationObservers are observing that part of DOM.
@@ -23,6 +23,7 @@
             doWithTempElement(settings.parentNode, function(tempElement) {
                 tempElement.setAttribute('style', getInitialStyleReset());
                 initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(tempElement));
+                removeOriginProperties(initialStyleAsPlainObject);
             });
             return initialStyleAsPlainObject;
 
@@ -67,6 +68,14 @@
                     result[propName] = declaration.getPropertyValue(propName);
                 }
                 return result;
+            }
+
+            function removeOriginProperties(style) {
+                var ORIGIN_PROPERTIES = ['perspective-origin', '-webkit-perspective-origin', 'transform-origin', '-webkit-transform-origin'];
+
+                ORIGIN_PROPERTIES.forEach(function(propName) {
+                    delete style[propName];
+                });
             }
         }
     };
