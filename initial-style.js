@@ -20,8 +20,9 @@
             var settings = createSettings(options);
             var initialStyleAsPlainObject;
 
-            doWithDummyElement(settings.parentNode, function(dummy) {
-                initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(dummy));
+            doWithTempElement(settings.parentNode, function(tempElement) {
+                tempElement.setAttribute('style', getInitialStyleReset());
+                initialStyleAsPlainObject = cssStyleDeclarationToPlainObject(window.getComputedStyle(tempElement));
             });
             return initialStyleAsPlainObject;
 
@@ -37,29 +38,25 @@
                 return settings;
             }
 
-            function doWithDummyElement(parentNode, callback) {
-                var dummy = document.createElement('div');
+            function doWithTempElement(parentNode, callback) {
+                var tempElement = document.createElement('div');
 
-                dummy.setAttribute('style', getStyle());
-                parentNode.appendChild(dummy);
-                callback(dummy);
-                parentNode.removeChild(dummy);
+                parentNode.appendChild(tempElement);
+                callback(tempElement);
+                parentNode.removeChild(tempElement);
+            }
 
-                function getStyle() {
-                    var INITIAL_STYLE = {
-                        'all': 'initial',
+            function getInitialStyleReset() {
+                var INITIAL_STYLE = {
+                    'all': 'initial',
+                    // unaffected by `all` shorthand:
+                    'direction': 'ltr',
+                    'unicode-bidi': 'normal'
+                };
 
-                        // unaffected by `all` shorthand
-                        'direction': 'ltr',
-                        'unicode-bidi': 'normal'
-                    };
-                    var styleString = '';
-
-                    for (var propName in INITIAL_STYLE) {
-                        styleString += propName + ': ' + INITIAL_STYLE[propName] + ' !important; ';
-                    }
-                    return styleString;
-                }
+                return Object.keys(INITIAL_STYLE).reduce(function(prev, propName) {
+                    return prev + propName + ': ' + INITIAL_STYLE[propName] + ' !important; ';
+                }, '');
             }
 
             function cssStyleDeclarationToPlainObject(declaration) {
